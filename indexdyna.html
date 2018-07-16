@@ -1,0 +1,96 @@
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<div id="container"></div>
+<button id="plain">Plain</button>
+<button id="inverted">Inverted</button>
+<button id="polar">Polar</button>
+<script>
+$(document).ready(function () {
+	 console.log( "ready!" );
+	    var socket =  io.connect();
+	    var shippedVal;
+		var processedVal;
+		var deliveredVal;
+		var data;
+
+	socket.on('message', function(data){ 
+	 console.log("Hello world!" +data);
+
+	 data = JSON.stringify(data);
+	data = JSON.parse(data);
+  //console.log("seriesData " + data.shipped);
+  shippedVal =  data.shipped;
+   processedVal =  data.processing;
+    deliveredVal =  data.delivered;
+  console.log("value of shippedVal is:" +shippedVal );
+ 
+  //});
+var chart = Highcharts.chart('container', {
+//console.log("value of shippedVal is:");
+//console.log("value of processedVal is:" +processedVal );
+//console.log("value of deliveredVal is:" +deliveredVal );
+    title: {
+        text: 'Number of request shipped, processed and delivered in a day'
+    },
+
+    subtitle: {
+        text: 'Plain'
+    },
+
+    xAxis: {
+        categories: ['shipped', 'processed', 'delivered']
+    },
+
+    series: [{
+        type: 'column',
+        colorByPoint: true,
+        data: [shippedVal,processedVal,deliveredVal],
+        showInLegend: false
+    }]
+
+});
+
+
+$('#plain').click(function () {
+    chart.update({
+        chart: {
+            inverted: false,
+            polar: false
+        },
+        subtitle: {
+            text: 'Plain'
+        }
+    });
+});
+
+$('#inverted').click(function () {
+    chart.update({
+        chart: {
+            inverted: true,
+            polar: false
+        },
+        subtitle: {
+            text: 'Inverted'
+        }
+    });
+});
+
+$('#polar').click(function () {
+    chart.update({
+        chart: {
+            inverted: false,
+            polar: true
+        },
+        subtitle: {
+            text: 'Polar'
+        }
+    });
+});
+
+});
+ });
+
+</script>
